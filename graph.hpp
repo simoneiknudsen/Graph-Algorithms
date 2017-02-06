@@ -16,7 +16,7 @@ public:
 		char name;
 
 		Vertex(char n) : name(n) {}
-    // For graph algorithms
+
 		int d;
 		char p;
 		int dis;
@@ -42,34 +42,34 @@ private:
 	Edges edges;
 
 public:
-		friend Vertex addVertex(diGraph &g, char c){
-			auto v = Vertex(c);
-			g.vertices.push_back(v);
-			return v;
-		}
+	friend Vertex addVertex(diGraph &g, char c){
+		auto v = Vertex(c);
+		g.vertices.push_back(v);
+		return v;
+	}
 
-		friend Edge addEdge(diGraph &g, char src, char des, int cost){
-			auto e = Edge(src,des,cost);
-			g.neighbors[src].push_back(e);
-			g.edges.push_back(e);
-			return e;
-		}
+	friend Edge addEdge(diGraph &g, char src, char des, int cost){
+		auto e = Edge(src,des,cost);
+		g.neighbors[src].push_back(e);
+		g.edges.push_back(e);
+		return e;
+	}
 
-		friend int getNeighbors(diGraph &g, char src){
-			return g.neighbors[src].size();
-		}
+	friend int getNeighbors(diGraph &g, char src){
+		return g.neighbors[src].size();
+	}
 
-		friend Vertex getSource(Edge e){
-			return e.src;
-		}
+	friend Vertex getSource(Edge e){
+		return e.src;
+	}
 
-		friend Vertex getDestination(Edge e){
-			return e.des;
-		}
+	friend Vertex getDestination(Edge e){
+		return e.des;
+	}
 
-		friend int getCost(Edge e){
-			return e.c;
-		}
+	friend int getCost(Edge e){
+		return e.c;
+	}
 }; //end of diGraph
 
 } // end of namespace graph
