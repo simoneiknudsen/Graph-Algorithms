@@ -1,6 +1,8 @@
 #ifndef GRAPH_HPP
 #define GRAPH_HPP
 
+#include "tags.hpp"
+
 #include <cassert>
 #include <list>
 #include <vector>
@@ -10,53 +12,59 @@
 #include <queue>
 
 namespace graph {
+template<typename Tag>
 struct diGraph {
 public:
 	struct Vertex {
-		char name;
+		int id;
 
-		Vertex(char n) : name(n) {}
+		Vertex(int n) : id(n) {}
 
-		int d;
-		char p;
-		int dis;
+		int key;
+		Vertex *p;
+	};
+	
+	struct cmp {
+		inline bool operator() (const Vertex& a, const Vertex& b){
+			return a.key < b.key;
+		}
 	};
 
 	struct Edge {
 		Vertex src;
 		Vertex des;
-		int c;
+		int w;
 
-		Edge(Vertex source, Vertex destination, int cost): src(source), des(destination), c(cost) {}
+		Edge(Vertex source, Vertex destination, int weight): src(source), des(destination), w(weight) {}
 	};
-
+	using DirectedTag = Tag;
 	using Vertices = std::vector<Vertex>;
 	using Edges = std::vector<Edge>;
-	using Neighbors = std::map<char,std::vector<Edge>>;
-	using Queue = std::priority_queue<char,std::vector<char>, std::greater<char>>;
-
+	using Neighbors = std::map<int,std::vector<Edge>>;
 private:
 	Vertices vertices;
-	Neighbors neighbors;
-	Queue minQ;	
+	Neighbors neighbors;	
 	Edges edges;
 
 public:
-	friend Vertex addVertex(diGraph &g, char c){
+	friend Vertex addVertex(diGraph &g, int c){
 		auto v = Vertex(c);
 		g.vertices.push_back(v);
 		return v;
 	}
 
-	friend Edge addEdge(diGraph &g, char src, char des, int cost){
-		auto e = Edge(src,des,cost);
-		g.neighbors[src].push_back(e);
+	friend Edge addEdge(diGraph &g, Vertex src, Vertex des, int w){
+		auto e = Edge(src,des,w);
+		g.neighbors[src.id].push_back(e);
+		if(std::is_same<DirectedTag,tags::Undirected>::value){
+			g.neighbors[des.id].push_back(e);
+		}
 		g.edges.push_back(e);
 		return e;
 	}
 
-	friend int getNeighbors(diGraph &g, char src){
-		return g.neighbors[src].size();
+	friend int getNeighbors(diGraph &g, Vertex src){
+		return g.neighbors[src.id].size();
 	}
 
 	friend Vertex getSource(Edge e){
@@ -67,8 +75,20 @@ public:
 		return e.des;
 	}
 
-	friend int getCost(Edge e){
-		return e.c;
+	friend int getWeight(Edge e){
+		return e.w;
+	}
+	
+	friend int getWeight(diGraph &g, Vertex u, Vertex v){
+		int counter = 0;
+		for(auto e: g.edges){
+			if(e.src.id == u.id && e.des.id == v.id){
+				break;
+			} else {
+				counter++;
+			}
+		}
+		return g.edges[counter].w;
 	}
 }; //end of diGraph
 
