@@ -19,17 +19,8 @@ public:
 		int id;
 
 		Vertex(int n) : id(n) {}
-
-		int key;
-		Vertex *p;
 	};
 	
-	struct cmp {
-		inline bool operator() (const Vertex& a, const Vertex& b){
-			return a.key < b.key;
-		}
-	};
-
 	struct Edge {
 		Vertex src;
 		Vertex des;
