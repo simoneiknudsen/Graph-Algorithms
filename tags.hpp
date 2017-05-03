@@ -7,6 +7,6 @@ namespace tags {
 struct Undirected { };
 struct Directed { };
 } // namespace tags
-} // namespace graphs
+} // namespace graph
 
 #endif // GRAPH_TAGS_HPP
