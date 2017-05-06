@@ -81,6 +81,38 @@ public:
 		}
 		return g.edges[counter].w;
 	}
+	
+	friend void bellmanFord(diGraph &g, Vertex &src){
+		std::vector<int> distance(g.vertices.size()+1);
+
+		for(int i = 0; i <= g.vertices.size(); i++){
+			distance[i] = INT_MAX;
+		}
+		distance[src.id] = 0;
+
+		for(int i = 0; i < g.vertices.size()-1; i++){
+			for(int j = 0; j < g.edges.size(); j++){
+				int u = g.edges[j].src.id;
+				int v = g.edges[j].des.id;
+				int w = g.edges[j].w;
+				if(distance[u] != INT_MAX && (distance[u] + w) < distance[v]){
+					distance[v] = distance[u]+w;
+				}
+			}
+		}
+		for(int i = 0; i < g.edges.size(); i++){
+			int u = g.edges[i].src.id;
+			int v = g.edges[i].des.id;
+			int w = g.edges[i].w;
+			if(distance[u] != INT_MAX && (distance[u] + w) < distance[v]){
+				printf("Error: Graph contains negative weight cycle.");
+			}
+		}
+
+		for(int i = 1; i < distance.size(); i++){
+			printf("From %d -> %d : %d\n", src.id, i, distance[i]);
+		}
+	}
 }; //end of diGraph
 
 } // end of namespace graph
