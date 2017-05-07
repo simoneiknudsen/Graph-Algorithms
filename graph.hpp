@@ -70,10 +70,10 @@ public:
 		return e.w;
 	}
 	
-	friend int getWeight(diGraph &g, Vertex u, Vertex v){
+	friend int getWeight(diGraph &g, int u, int v){
 		int counter = 0;
 		for(auto e: g.edges){
-			if(e.src.id == u.id && e.des.id == v.id){
+			if((e.src.id == u && e.des.id == v) || (e.des.id == u && e.src.id == v)){
 				break;
 			} else {
 				counter++;
@@ -111,6 +111,49 @@ public:
 
 		for(int i = 1; i < distance.size(); i++){
 			printf("From %d -> %d : %d\n", src.id, i, distance[i]);
+		}
+	}
+	
+	friend int minVertex(diGraph &g, std::vector<int> d, std::vector<bool> p){
+		int index;
+		int min = INT_MAX;
+		for(int i = 0; i < g.vertices.size(); i++){
+			if(p[i] == false && d[i] <= min){
+				min = d[i];
+				index = i;
+			}
+		}
+		return index;
+	}
+	
+	friend void prim(diGraph &g, Vertex &src){
+		std::vector<int> distance(g.vertices.size()+1);
+		std::vector<bool> visited(g.vertices.size()+1);
+		std::vector<int> tree(g.vertices.size()+1);
+
+		for(int i = 0; i <= g.vertices.size(); i++){
+			distance[i] = INT_MAX;
+			visited[i] = false;
+		}
+		distance[src.id] = 0;
+
+		for(int i = 0; i < distance.size(); i++){
+			auto u = minVertex(g,distance,visited);
+
+			visited[u] = true;
+
+			for(int j = 0; j < g.neighbors[u].size(); j++){
+				auto v = g.neighbors[u][j].id;
+				auto d = getWeight(g,u,v);
+				if(distance[v] > d && visited[v] == false){
+					distance[v] = d;
+					tree[v] = u;
+				}
+			}
+		}
+		
+		for(int i = 2; i <= g.vertices.size(); i++){
+			printf("%d - %d : %d\n", tree[i], i, getWeight(g,i,tree[i]));
 		}
 	}
 }; //end of diGraph
