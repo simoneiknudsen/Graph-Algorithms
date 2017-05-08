@@ -55,6 +55,7 @@ int main(){
 	addEdge(g1,v8,v9,7);
 
 	prim(g1,v1);
+	kruskal(g1);
   
   return 0;
 }
