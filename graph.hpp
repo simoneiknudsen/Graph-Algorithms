@@ -28,6 +28,12 @@ public:
 
 		Edge(Vertex source, Vertex destination, int weight): src(source), des(destination), w(weight) {}
 	};
+	
+	struct cmp {
+    		bool operator()( const Edge& a, const Edge& b ) { 
+    			return a.w < b.w; 
+    		}
+	};
 	using DirectedTag = Tag;
 	using Vertices = std::vector<Vertex>;
 	using Edges = std::vector<Edge>;
@@ -156,6 +162,60 @@ public:
 			printf("%d - %d : %d\n", tree[i], i, getWeight(g,i,tree[i]));
 		}
 	}
+	
+	friend void makeSet(diGraph &g, Vertex &x, std::vector<Vertex> &parent, std::vector<int> &rank){
+		parent[x.id] = x;
+		rank[x.id] = 0;
+	}
+
+	friend Vertex findSet(diGraph &g, Vertex &x, std::vector<Vertex> &parent){
+		if(x.id != parent[x.id].id){
+			parent[x.id] = findSet(g,parent[x.id],parent);
+		}
+		return parent[x.id];
+	}
+
+	friend void setUnion(diGraph &g, Vertex &x, Vertex &y, std::vector<Vertex> &parent, std::vector<int> &rank){
+		auto findX = findSet(g,x,parent);
+		auto findY = findSet(g,y,parent);
+
+		if(rank[findX.id] > rank[findY.id]){
+			parent[findY.id] = findX;
+		} else {
+			parent[findX.id] = findY;
+			if(rank[findX.id] == rank[findY.id]){
+				rank[findY.id]++;
+			}
+		}
+	}
+
+	friend void kruskal(diGraph &g){
+		std::vector<Edge> A;
+		std::vector<int> rank(g.vertices.size()+1);
+		std::vector<Vertex> p;
+		p.reserve(g.vertices.size()+1);
+		std::vector<Edge> edges;
+
+		for(auto v : g.vertices){
+			makeSet(g,v,p,rank);
+		}
+		for(auto edge : g.edges){
+			edges.push_back(edge);
+		}
+		std::sort(edges.begin(),edges.end(),cmp());
+
+		for(auto e : edges){
+			if(findSet(g,e.src,p).id != findSet(g,e.des,p).id){
+				A.push_back(e);
+				setUnion(g,e.src,e.des,p,rank);
+			}
+		}
+
+		for(int i = 0; i < A.size(); i++){
+			printf("%d - %d : %d\n", A[i].src.id, A[i].des.id, A[i].w);
+		}
+	}
+
 }; //end of diGraph
 
 } // end of namespace graph
