@@ -37,7 +37,7 @@ public:
 	using DirectedTag = Tag;
 	using Vertices = std::vector<Vertex>;
 	using Edges = std::vector<Edge>;
-	using Neighbors = std::map<int,std::vector<Edge>>;
+	using Neighbors = std::map<int,std::vector<Vertex>>;
 private:
 	Vertices vertices;
 	Neighbors neighbors;	
