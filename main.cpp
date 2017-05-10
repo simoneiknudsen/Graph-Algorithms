@@ -57,6 +57,14 @@ int main(){
 
 	prim(g1,v1);
 	kruskal(g1);
+	
+	//Testing of auxiliary functions
+	cout << "OutDegree of v1: " << outDegree(g,v1) << endl;
+	cout << "InDegree of v1: " << inDegree(g,v1) << endl;
+	cout << "Number of vertices: " << getNumberVertices(g) << endl;
+	cout << "Number of edges: " << getNumberEdges(g) << endl;
+	auto inBound = inboundNeighbors(g,v1);
+	auto outBound = outboundNeighbors(g,v1);
   
   return 0;
 }
