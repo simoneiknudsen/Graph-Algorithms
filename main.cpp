@@ -87,6 +87,31 @@ int main(){
 	cout << "Number of edges: " << getNumberEdges(g) << endl;
 	auto inBound = inboundNeighbors(g,v1);
 	auto outBound = outboundNeighbors(g,v1);
+	
+	//Testing of BFS
+	/*auto g = diGraph<Undirected>();
+
+	auto v1 = addVertex(g,1);
+	auto v2 = addVertex(g,2);
+	auto v3 = addVertex(g,3);
+	auto v4 = addVertex(g,4);
+	auto v5 = addVertex(g,5);
+	auto v6 = addVertex(g,6);
+	auto v7 = addVertex(g,7);
+	auto v8 = addVertex(g,8);
+
+	addEdge(g,v1,v2);
+	addEdge(g,v2,v3);
+	addEdge(g,v3,v4);
+	addEdge(g,v4,v5);
+	addEdge(g,v4,v6);
+	addEdge(g,v5,v6);
+	addEdge(g,v5,v7);
+	addEdge(g,v5,v8);
+	addEdge(g,v6,v7);
+	addEdge(g,v7,v8);
+
+	bfs(g,v3);*/
   
   return 0;
 }
