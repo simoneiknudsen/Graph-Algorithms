@@ -6,9 +6,9 @@ using namespace tags;
 using namespace std;
 
 int main(){
-	auto g = diGraph<Directed>();
-
 	//Testing Bellman Ford algorithm on directed graph
+	/*auto g = diGraph<Directed>();
+
 	auto v1 = addVertex(g,1);
 	auto v2 = addVertex(g,2);
 	auto v3 = addVertex(g,3);
@@ -26,9 +26,9 @@ int main(){
 	addEdge(g,v5,v4,9);
 	addEdge(g,v5,v3,-3);
 
-	bellmanFord(g,v1);
+	bellmanFord(g,v1);*/
 	
-	//Testing of Prim's Algorithm on undirected graph
+	//Testing of Prim's and Kruskal's Algorithm on undirected graph
 	auto g1 = diGraph<Undirected>();
 	auto v1 = addVertex(g1,1);
 	auto v2 = addVertex(g1,2);
@@ -57,6 +57,28 @@ int main(){
 
 	prim(g1,v1);
 	kruskal(g1);
+	
+	//Testing of Dijkstra's Algorithm
+	/*auto g = diGraph<Directed>();
+
+	auto v1 = addVertex(g,1);
+	auto v2 = addVertex(g,2);
+	auto v3 = addVertex(g,3);
+	auto v4 = addVertex(g,4);
+	auto v5 = addVertex(g,5);
+
+	addEdge(g,v1,v2,10);
+	addEdge(g,v1,v5,5);
+	addEdge(g,v2,v5,2);
+	addEdge(g,v2,v3,1);
+	addEdge(g,v3,v4,4);
+	addEdge(g,v4,v3,6);
+	addEdge(g,v4,v1,7);
+	addEdge(g,v5,v2,3);
+	addEdge(g,v5,v3,9);
+	addEdge(g,v5,v4,2);
+
+	dijkstra(g,v1);*/
 	
 	//Testing of auxiliary functions
 	cout << "OutDegree of v1: " << outDegree(g,v1) << endl;
