@@ -339,6 +339,44 @@ public:
 			printf("Vertex %d: %d\n", i, dist[i]);
 		}
 	}
+	
+	friend void dfsVisit(diGraph &g, Vertex &u, int &t, std::vector<std::string> &color,std::vector<int> &dist,std::vector<Vertex> &p,std::vector<int> &f){
+		t = t+1;
+		dist[u.id] = t;
+		color[u.id] = "gray";
+		for(auto v : g.neighbors[u.id]){
+			if(color[v.id] == "white"){
+				p[v.id] = u;
+				dfsVisit(g,v,t,color,dist,p,f);
+			}
+		}
+		color[u.id] = "black";
+		t = t+1;
+		f[u.id] = t;
+	}
+
+	friend void dfs(diGraph &g){
+		std::vector<std::string> color(g.vertices.size()+1);
+		std::vector<int> dist(g.vertices.size()+1);
+		std::vector<Vertex> p;
+		p.reserve(g.vertices.size()+1);
+		std::vector<int> f(g.vertices.size()+1);
+
+		for(auto u : g.vertices){
+			color[u.id] = "white";
+		}
+		int t = 0;
+
+		for(auto u : g.vertices){
+			if(color[u.id] == "white"){
+				dfsVisit(g,u,t,color,dist,p,f);
+			}
+		}
+
+		for(int i = 1; i < dist.size(); i++){
+			printf("%d: %d/%d\n", i, dist[i], f[i]);
+		}
+	}
 
 }; //end of diGraph
 
