@@ -74,10 +74,9 @@ public:
 		return e;
 	}
 
-	friend Edge addEdge(diGraph &g, int u, int v, int w){
-		auto src = Vertex(u);
-		auto des = Vertex(v);
-		auto e = Edge(src,des,w);
+	// addEdge for graphs without edge weights
+	friend Edge addEdge(diGraph &g, Vertex src, Vertex des){
+		auto e = Edge(src,des,0);
 		g.neighbors[src.id].push_back(des.id);
 		if(std::is_same<DirectedTag,tags::Undirected>::value){
 			g.neighbors[des.id].push_back(src.id);
@@ -305,6 +304,39 @@ public:
 
 		for(int i = 1; i < distance.size(); i++){
 			printf("%d - %d : %d\n", s.id, i, distance[i]);
+		}
+	}
+	
+	friend void bfs(diGraph &g, Vertex &src){
+		std::vector<std::string> color(g.vertices.size()+1);
+		std::vector<int> dist(g.vertices.size()+1);
+		std::vector<Vertex> p;
+		p.reserve(g.vertices.size()+1);
+		std::vector<Vertex> Q;
+
+		for(int i = 0; i <= g.vertices.size(); i++){
+			color[i] = "white";
+			dist[i] = INT_MAX;
+		}
+		color[src.id] = "gray";
+		dist[src.id] = 0;
+		Q.push_back(src);
+		while(!Q.empty()){
+			auto u = Q[0];
+			Q.erase(Q.begin());
+			for(int j = 0; j < g.neighbors[u.id].size(); j++){
+				auto v = g.neighbors[u.id][j];
+				if(color[v.id] == "white"){
+					color[v.id] = "gray";
+					dist[v.id] = dist[u.id]+1;
+					p[v.id] = u;
+					Q.push_back(v);
+				}
+			}
+			color[u.id] = "black";
+		}
+		for(int i = 1; i < dist.size(); i++){
+			printf("Vertex %d: %d\n", i, dist[i]);
 		}
 	}
 
