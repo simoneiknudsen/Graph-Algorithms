@@ -36,14 +36,25 @@ public:
 	};
 	using DirectedTag = Tag;
 	using Vertices = std::vector<Vertex>;
+	using InboundNeighbors = std::map<int,std::vector<Vertex>>;
 	using Edges = std::vector<Edge>;
 	using Neighbors = std::map<int,std::vector<Vertex>>;
 private:
 	Vertices vertices;
-	Neighbors neighbors;	
+	Neighbors neighbors;
+	InboundNeighbors inboundNeighbors;
 	Edges edges;
 
 public:
+	//Operator Overloading to enable direct comparison between vertices
+	friend bool operator!=(const Vertex &a, const Vertex &b){
+		return a.id != b.id;
+	}
+
+	friend bool operator==(const Vertex &a, const Vertex &b){
+		return a.id == b.id;
+	}
+	
 	friend Vertex addVertex(diGraph &g, int c){
 		auto v = Vertex(c);
 		g.vertices.push_back(v);
@@ -60,8 +71,28 @@ public:
 		return e;
 	}
 
-	friend int getNeighbors(diGraph &g, Vertex src){
+	friend int outDegree(diGraph &g, Vertex &src){
 		return g.neighbors[src.id].size();
+	}
+	
+	friend int inDegree(diGraph &g, Vertex &src){
+		return g.inboundNeighbors[src.id].size();
+	}
+
+	friend std::vector<Vertex> outboundNeighbors(diGraph &g, Vertex &src){
+		return g.neighbors[src.id];
+	}
+
+	friend std::vector<Vertex> inboundNeighbors(diGraph &g, Vertex &src){
+		return g.inboundNeighbors[src.id];
+	}
+
+	friend int getNumberVertices(diGraph &g){
+		return g.vertices.size();
+	}
+
+	friend int getNumberEdges(diGraph &g){
+		return g.edges.size();
 	}
 
 	friend Vertex getSource(Edge e){
