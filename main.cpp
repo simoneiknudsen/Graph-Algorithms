@@ -112,6 +112,27 @@ int main(){
 	addEdge(g,v7,v8);
 
 	bfs(g,v3);*/
+	
+	/* Testing of DFS algorithm on directed graph
+	auto g = diGraph<Directed>();
+
+	auto v1 = addVertex(g,1);
+	auto v2 = addVertex(g,2);
+	auto v3 = addVertex(g,3);
+	auto v4 = addVertex(g,4);
+	auto v5 = addVertex(g,5);
+	auto v6 = addVertex(g,6);
+
+	addEdge(g,v1,v2);
+	addEdge(g,v1,v3);
+	addEdge(g,v2,v4);
+	addEdge(g,v3,v2);
+	addEdge(g,v4,v3);
+	addEdge(g,v5,v4);
+	addEdge(g,v5,v6);
+	addEdge(g,v6,v6);
+
+	dfs(g);*/
   
   return 0;
 }
