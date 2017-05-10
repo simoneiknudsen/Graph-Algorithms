@@ -20,7 +20,7 @@ public:
 
 		Vertex(int n) : id(n) {}
 	};
-	
+
 	struct Edge {
 		Vertex src;
 		Vertex des;
@@ -28,17 +28,19 @@ public:
 
 		Edge(Vertex source, Vertex destination, int weight): src(source), des(destination), w(weight) {}
 	};
-	
+
 	struct cmp {
-    		bool operator()( const Edge& a, const Edge& b ) { 
-    			return a.w < b.w; 
-    		}
+    	bool operator()( const Edge& a, const Edge& b ) { 
+    		return a.w < b.w; 
+    	}
 	};
+
 	using DirectedTag = Tag;
 	using Vertices = std::vector<Vertex>;
 	using InboundNeighbors = std::map<int,std::vector<Vertex>>;
 	using Edges = std::vector<Edge>;
 	using Neighbors = std::map<int,std::vector<Vertex>>;
+
 private:
 	Vertices vertices;
 	Neighbors neighbors;
@@ -46,7 +48,6 @@ private:
 	Edges edges;
 
 public:
-	//Operator Overloading to enable direct comparison between vertices
 	friend bool operator!=(const Vertex &a, const Vertex &b){
 		return a.id != b.id;
 	}
@@ -54,7 +55,7 @@ public:
 	friend bool operator==(const Vertex &a, const Vertex &b){
 		return a.id == b.id;
 	}
-	
+
 	friend Vertex addVertex(diGraph &g, int c){
 		auto v = Vertex(c);
 		g.vertices.push_back(v);
@@ -63,9 +64,25 @@ public:
 
 	friend Edge addEdge(diGraph &g, Vertex src, Vertex des, int w){
 		auto e = Edge(src,des,w);
-		g.neighbors[src.id].push_back(e);
+		g.neighbors[src.id].push_back(des.id);
 		if(std::is_same<DirectedTag,tags::Undirected>::value){
-			g.neighbors[des.id].push_back(e);
+			g.neighbors[des.id].push_back(src.id);
+		} else {
+			g.inboundNeighbors[des.id].push_back(src.id);
+		}
+		g.edges.push_back(e);
+		return e;
+	}
+
+	friend Edge addEdge(diGraph &g, int u, int v, int w){
+		auto src = Vertex(u);
+		auto des = Vertex(v);
+		auto e = Edge(src,des,w);
+		g.neighbors[src.id].push_back(des.id);
+		if(std::is_same<DirectedTag,tags::Undirected>::value){
+			g.neighbors[des.id].push_back(src.id);
+		} else {
+			g.inboundNeighbors[des.id].push_back(src.id);
 		}
 		g.edges.push_back(e);
 		return e;
@@ -74,7 +91,7 @@ public:
 	friend int outDegree(diGraph &g, Vertex &src){
 		return g.neighbors[src.id].size();
 	}
-	
+
 	friend int inDegree(diGraph &g, Vertex &src){
 		return g.inboundNeighbors[src.id].size();
 	}
@@ -96,29 +113,39 @@ public:
 	}
 
 	friend Vertex getSource(Edge e){
-		return e.src;
+		return e.src.id;
 	}
 
 	friend Vertex getDestination(Edge e){
-		return e.des;
+		return e.des.id;
 	}
 
 	friend int getWeight(Edge e){
 		return e.w;
 	}
-	
+
 	friend int getWeight(diGraph &g, int u, int v){
 		int counter = 0;
-		for(auto e: g.edges){
-			if((e.src.id == u && e.des.id == v) || (e.des.id == u && e.src.id == v)){
-				break;
-			} else {
-				counter++;
+		if(std::is_same<DirectedTag,tags::Directed>::value){
+			for(auto e: g.edges){
+				if((e.src.id == u && e.des.id == v)){
+					break;
+				} else {
+					counter++;
+				}
+			}
+		} else {
+			for(auto e: g.edges){
+				if((e.src.id == u && e.des.id == v) || (e.des.id == u && e.src.id == v)){
+					break;
+				} else {
+					counter++;
+				}
 			}
 		}
 		return g.edges[counter].w;
 	}
-	
+
 	friend void bellmanFord(diGraph &g, Vertex &src){
 		std::vector<int> distance(g.vertices.size()+1);
 
@@ -150,23 +177,13 @@ public:
 			printf("From %d -> %d : %d\n", src.id, i, distance[i]);
 		}
 	}
-	
-	friend int minVertex(diGraph &g, std::vector<int> d, std::vector<bool> p){
-		int index;
-		int min = INT_MAX;
-		for(int i = 0; i < g.vertices.size(); i++){
-			if(p[i] == false && d[i] <= min){
-				min = d[i];
-				index = i;
-			}
-		}
-		return index;
-	}
-	
+
 	friend void prim(diGraph &g, Vertex &src){
 		std::vector<int> distance(g.vertices.size()+1);
 		std::vector<bool> visited(g.vertices.size()+1);
 		std::vector<int> tree(g.vertices.size()+1);
+		std::vector<std::pair<int,int>> MST;
+
 
 		for(int i = 0; i <= g.vertices.size(); i++){
 			distance[i] = INT_MAX;
@@ -190,10 +207,11 @@ public:
 		}
 		
 		for(int i = 2; i <= g.vertices.size(); i++){
+			MST.push_back(std::make_pair(tree[i],i));
 			printf("%d - %d : %d\n", tree[i], i, getWeight(g,i,tree[i]));
 		}
 	}
-	
+
 	friend void makeSet(diGraph &g, Vertex &x, std::vector<Vertex> &parent, std::vector<int> &rank){
 		parent[x.id] = x;
 		rank[x.id] = 0;
@@ -247,10 +265,51 @@ public:
 		}
 	}
 
+	friend int minVertex(diGraph &g, std::vector<int> d, std::vector<bool> p){
+		int index;
+		int min = INT_MAX;
+		for(int i = 1; i <= g.vertices.size(); i++){
+			if(p[i] == false && d[i] <= min){
+				min = d[i];
+				index = i;
+			}
+		}
+		return index;
+	}
+
+	friend void dijkstra(diGraph &g, Vertex &s){
+		std::vector<int> distance(g.vertices.size()+1);
+		std::vector<int> pi(g.vertices.size()+1);
+		std::vector<bool> visited(g.vertices.size()+1);
+
+		for(int i = 0; i <= g.vertices.size(); i++){
+			distance[i] = INT_MAX;
+			visited[i] = false;
+		}
+		distance[s.id] = 0;
+
+		for(int i = 0; i < g.vertices.size(); i++){
+			auto u = minVertex(g,distance,visited);
+
+			visited[u] = true;
+
+			for(int j = 0; j < g.neighbors[u].size(); j++){
+				auto v = g.neighbors[u][j].id;
+				auto d = distance[u]+getWeight(g,u,v);
+				if(distance[v] > d && visited[v] == false){
+					distance[v] = d;
+					pi[v] = u;
+				}
+			}
+		}
+
+		for(int i = 1; i < distance.size(); i++){
+			printf("%d - %d : %d\n", s.id, i, distance[i]);
+		}
+	}
+
 }; //end of diGraph
 
 } // end of namespace graph
 
-#endif // GRAPH_HPP    
-    
-    
+#endif // GRAPH_HPP
