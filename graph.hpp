@@ -48,6 +48,20 @@ private:
 	Edges edges;
 
 public:
+	//For printing of vectors using cout
+	template<typename T>
+	friend std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
+		os << "[";
+		for(int i = 0; i < v.size(); i++){
+			os << v[i].id;
+			if (i < v.size()-1) {
+				os << ", ";
+			}
+		}
+		os << "]";
+    		return os;
+	}
+	//Operator overloading for direct comparison between vertices
 	friend bool operator!=(const Vertex &a, const Vertex &b){
 		return a.id != b.id;
 	}
