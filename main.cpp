@@ -58,6 +58,9 @@ int main(){
 	prim(g1,v1);
 	kruskal(g1);
 	
+	auto vec = outboundNeighbors(g,v1);
+	cout << vec << endl;
+	
 	//Testing of Dijkstra's Algorithm
 	/*auto g = diGraph<Directed>();
 
